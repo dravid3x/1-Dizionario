@@ -9,7 +9,7 @@ using namespace std;
 #include <fstream>
 #include <string>
 
-void inserimentoFrase();
+void inserimentoFrase(), dividiFrase(string frase, char divisore, string* destinazione);
 
 const int dim = 1000;
 int logic_dim;
@@ -20,7 +20,10 @@ string fraseInseritaArr[dim];
 int main()
 {
 	inserimentoFrase();
+	cout << "\n" << fraseInserita.length() << "\n";
 
+	dividiFrase(fraseInserita, ' ', fraseInseritaArr);
+	system("PAUSE");
 
 	/*
 	while (!dizionario.eof()) {
@@ -42,5 +45,19 @@ void inserimentoFrase() {
 	return;
 }
 
-
-//while (!MyFile.eof()) {
+void dividiFrase(string frase, char divisore, string destinazione[]) {
+	//Funzione che mi permette di trasformare una frase in un array, dividendo le parole in base ad un divisore dato
+	int lunghezza = frase.length();
+	string parola;
+	int pos = 0;
+	for (int i = 0; i < lunghezza; i++) {
+		char carattere = frase[i];
+		if (carattere == divisore) {
+			destinazione[pos] = parola;
+			pos++;
+			parola.clear();
+		}
+		else parola += carattere;
+	}
+	destinazione[pos] = parola;
+}
