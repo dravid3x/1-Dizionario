@@ -7,9 +7,13 @@ using namespace std;
 #include <cstdlib>
 #include <stdlib.h>
 #include <fstream>
+#include <windows.h>
 #include <string>
+#include <time.h>
+#pragma execution_character_set( "utf-8" )
 
 void inserimentoFrase(), dividiFrase(string frase, char divisore, string* destinazione);
+bool isAnagramma(string parola1, string parola2);
 
 const int dim = 1000;
 int logic_dim;
@@ -19,11 +23,33 @@ string fraseInseritaArr[dim];
 
 int main()
 {
+	SetConsoleOutputCP(65001);	//Imposto il char_set per mostrare i caratteri UTF-8
 	inserimentoFrase();
-	cout << "\n" << fraseInserita.length() << "\n";
-
 	dividiFrase(fraseInserita, ' ', fraseInseritaArr);
+	cout << "\n";
+	int pos = 0, nAnagrammi = 0;
+	string parola = fraseInseritaArr[pos];;
+	//Per ogni parola della frase inserita eseguo il confronto con ogni elemento all'interno del dizionario
+	clock_t start = clock();
+	while (parola != "") {
+		dizionario.clear();
+		dizionario.seekg(0);
+		cout << "Parola analizzata: " << parola << "\n";
+		while (!dizionario.eof()) {
+			string linea;
+			dizionario >> linea;
+			if(isAnagramma(parola, linea)) cout << "Anagramma n. " << nAnagrammi++ << " : " << linea << "\n";
+		}
+		pos++;
+		parola = fraseInseritaArr[pos];
+	}
+	clock_t end = clock();
+	cout << "\nTempo di esecuzione = secondi " << (double)(end - start) / CLOCKS_PER_SEC << "\n";
+	cout << "\n";
 	system("PAUSE");
+
+
+
 
 	/*
 	while (!dizionario.eof()) {
@@ -41,7 +67,6 @@ void inserimentoFrase() {
 	cout << "Inserire la frase da ricercare\n";
 	cout << "\n>> ";
 	getline(cin, fraseInserita);
-	cout << fraseInserita;
 	return;
 }
 
@@ -60,4 +85,22 @@ void dividiFrase(string frase, char divisore, string destinazione[]) {
 		else parola += carattere;
 	}
 	destinazione[pos] = parola;
+}
+
+bool isAnagramma(string parola1, string parola2) {
+	if (parola1.length() != parola2.length()) return false;
+	int dim = parola1.length();
+	const int dimArr = 255;
+	int nCaratteri[dimArr] = { 0 }; //Inizializzo il vettore a 0
+	//Riempio un vettore nelle posizioni dei caratteri, ovvero mi salvo quali e quanti caratteri ascii extended sono presenti, e sottraggo quelli di parola2.
+	//Se al termine avrò un vettore le quali celle sono tutte 0 le due parole sono anagrammi
+	for (int i = 0; i < dim; i++) {
+		nCaratteri[parola1[i]]++;
+		nCaratteri[parola2[i]]--;
+	}
+	//Controllo zeri
+	for (int i = 0; i < dimArr; i++) {
+		if (nCaratteri[i] != 0) return false;
+	}
+	return true;
 }
